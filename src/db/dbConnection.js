@@ -1,9 +1,11 @@
-const Sequelize = require("sequelize");
+import Sequelize from "sequelize";
 
-const MYSQL_URI = process.env.MYSQL_URI;
+const db = process.env.MYSQL_URI;
 
-const sequelize = new Sequelize(MYSQL_URI);
+const sequelize = new Sequelize(db, {
+  dialect: "mysql",
+});
+
 sequelize.authenticate();
-console.log("DB Connection is running");
 
-module.exports = sequelize;
+export default sequelize;

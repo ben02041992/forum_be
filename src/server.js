@@ -1,40 +1,36 @@
-const dotenv = require("dotenv");
-dotenv.config();
+import "dotenv/config";
 
-const express = require("express");
-const cors = require("cors");
-const morgan = require("morgan");
+import express from "express";
+import cors from "cors";
+import morgan from "morgan";
 
-const User = require("./users/model");
+import userRouter from "./users/routes.js";
+import User from "./users/model.js";
+// import Conversation from "./conversation/model.js";
 
-const port = process.env.PORT || 5001;
+const port = process.env.PORT || 8080;
 
 const app = express();
 
-app.use(cors());
-app.use(morgan("dev"));
-app.use(express.json());
+const syncTables = async () => {
+  await User.sync();
+  // await Conversation.sync();
+};
 
-app.all("*", (req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "POST, PUT, OPTIONS, DELETE, GET");
-  res.header("Access-Control-Max-Age", "3600");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With, x-access-token"
-  );
-  next();
-});
+app.use(express.json());
+app.use(morgan("tiny"));
+app.use(cors());
+
 app.get("/health", (req, res) => {
   res.status(200).json({ message: "API Healthy" });
 });
 
-const syncTables = async () => {
-  await User.sync();
-};
+app.use("/user", userRouter);
 
 app.listen(port, () => {
   console.log(`server is running on port ${port}`);
   syncTables();
-  console.log("DB Connection is running");
+  console.log("DB Connected");
 });
+
+export default app;
