@@ -18,8 +18,6 @@ const syncTables = async () => {
 };
 
 app.use(express.json());
-app.use(morgan("tiny"));
-app.use(cors());
 
 app.get("/health", (req, res) => {
   res.status(200).json({ message: "API Healthy" });
