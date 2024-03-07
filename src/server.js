@@ -1,22 +1,34 @@
-require("dotenv").config();
-const express = require("express");
-const cors = require('cors');
-const userRouter = require("./userlist/routes"); 
-const messageRouter = require("./messagelist/routes"); 
-const gameRouter = require("./gamelist/routes"); 
+import "dotenv/config";
 
-const port = process.env.PORT || 5001;
+import express from "express";
+import cors from "cors";
+import morgan from "morgan";
+
+import userRouter from "./users/routes.js";
+import User from "./users/model.js";
+// import Conversation from "./conversation/model.js";
+
+const port = process.env.PORT || 8080;
 
 const app = express();
 
-app.use(cors());
+const syncTables = async () => {
+  await User.sync();
+  // await Conversation.sync();
+};
+
 app.use(express.json());
 
-app.use(userRouter);
-app.use(messageRouter);
-app.use(gameRouter);
+app.get("/health", (req, res) => {
+  res.status(200).json({ message: "API Healthy" });
+});
+
+app.use("/user", userRouter);
 
 app.listen(port, () => {
-  
-  console.log(`Server is listening on port ${port}`);
+  console.log(`server is running on port ${port}`);
+  syncTables();
+  console.log("DB Connected");
 });
+
+export default app;
