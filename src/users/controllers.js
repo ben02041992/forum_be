@@ -80,3 +80,5 @@ export const deleteUserById = async (req, res) => {
 };
 
 export const deleteUser = async (req, res) => {};
+
+export const successfulLogin = (req, res) => {};
