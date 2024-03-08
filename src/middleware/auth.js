@@ -1,56 +1,43 @@
-const bcrypt = require("bcrypt");
+import User from "../users/model.js";
+import bcrypt from "bcrypt";
+;
+export const hashPass = async (req, res, next) => {
+  const saltRounds = parseInt(process.env.SALT_ROUNDS);
 
-const User = require("../userlist/model");
-
-const saltRounds = parseInt(process.env.SALT_ROUNDS);
-
-const hashPass = async (req, res, next) => {
   try {
-    console.log("req.body.password before hash: ", req.body.password);
-    const hashedPassword = await bcrypt.hash(req.body.password, saltRounds); 
-
-    req.body.password = hashedPassword; 
-    console.log("req.body.password after hash: ", req.body.password);
+    const hashedPass = (req.body.password = await bcrypt.hash(
+      req.body.password,
+      saltRounds
+    ));
+    req.body.password = hashedPass;
+    const data = hashedPass
+    console.log(data)
     next();
   } catch (error) {
-    res.status(501).json({ message: error.message, error: error });
+    console.log({
+      success: false,
+      message: "Internal error",
+      error: error.message,
+    });
   }
 };
 
-const comparePass = async (req, res, next) => {
+export const comparePass = async (req, res, next) => {
   try {
+    const { password, email } = req.body;
+    const user = await User.findOne({ where: { email } });
 
-    const user = await User.findOne({ where: { username: req.body.username } });
+    const match = await bcrypt.compare(password, user.password);
 
-    const matched = await bcrypt.compare(
-      req.body.password,
-      user.dataValues.password
-    );
-
-    if (!matched) {
-      res.status(401).json({ message: "no!!!!!!!!!!!" });
+    if (!match) {
+      res.status(401).json({ message: "Invalid credentials" });
       return;
     }
+
     req.user = user;
+
     next();
   } catch (error) {
-    res.status(501).json({ message: error.message, error: error });
+    res.status(501).json({ message: error.message, error });
   }
-};
-
-const emailValidation = async (req, res, next) => {
- 
-  next();
-};
-
-const passwordValdation = async (req, res, next) => {
-  
-  next();
-};
-
-module.exports = {
-  hashPass: hashPass,
-  comparePass: comparePass,
-  emailValidation: emailValidation,
-  passwordValdation: passwordValdation,
 };
