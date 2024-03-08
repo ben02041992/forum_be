@@ -1,43 +1,29 @@
 import User from "./model.js";
+import jwt from "jsonwebtoken";
 
 export const createUser = async (req, res) => {
-  const { username, email, password } = req.body;
-
   try {
-    if (!username || !email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Username, email, password fields required",
-      });
+    const { username, email, password } = req.body;
+
+    const userExists = await User.findOne({ email });
+
+    if (userExists) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Account already exists" });
     }
 
-    const userExists = await User.findOne({
-      where: {
-        email,
-      },
-    });
+    const user = await User.create({ username, email, password });
 
-    if (!userExists) {
-      const user = await User.create({
-        email,
-        username,
-        password,
-      });
-      res.status(201).json({
-        success: true,
-        message: `User: ${username} created successfully. Please login to continue.`,
-        data: {
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          password: user.password,
-        },
-      });
-    }
+    return res
+      .status(201)
+      .json({ success: true, message: "User created", user });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Server error",
+      source: "createUser",
+      error: error.message,
     });
   }
 };
@@ -55,20 +41,59 @@ export const getUserById = async (req, res) => {
   req = res.send({ message: "userbyID" });
 };
 
-export const userLogin = async (req, res) => {
-  const { email, password } = req.body;
-  const secret = process.env.SECRET;
+export const loginUser = async (req, res) => {
   try {
-    const user = await User.findOne({ email });
-    if (user) {
-      await jwt.sign(user, secret, { expiresIn: 1000 }, (err, token) => {
-        if (err) throw err;
-        res.status(200).json({ token });
-      });
+    if (!req.user) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid credentials" });
     }
+
+    const { id, username, email, password } = req.user;
+
+    const token = jwt.sign(
+      { id: id, username, email, password },
+      process.env.SECRET,
+      {
+        expiresIn: process.env.EXPIRY,
+      }
+    );
+
+    res.cookie("4rom", token, { httpOnly: true, maxAge: 6000 });
+    await User.update({ status: "logged in" }, { where: { id } });
+
+    return res.status(200).json({
+      success: true,
+      message: `${username} logged in`,
+      user: req.user,
+      token,
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      source: "loginUser",
+      error: error.message,
+    });
   }
+};
+
+export const verifyUser = async (req, res) => {
+  try {
+    return res.status(200).json({ success: true, user: req.user });
+  } catch (error) {
+    await User.findByIdAndUpdate(
+      req.user.id,
+      { verified: false },
+      { setVerified: true }
+    );
+  }
+  return res.status(500).json({
+    success: false,
+    message: "sever error",
+    source: "verifyUser",
+    error: error.message,
+  });
 };
 
 export const updateUserById = async (req, res) => {
@@ -79,6 +104,5 @@ export const deleteUserById = async (req, res) => {
   req = res.send({ message: "deleteuserbyID" });
 };
 
-export const deleteUser = async (req, res) => {};
+export const logOut = async (req, res) => {};
 
-export const successfulLogin = (req, res) => {};

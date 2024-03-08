@@ -1,4 +1,4 @@
-import sequelize from "../db/dbConnection";
+import sequelize from "../db/dbConnection.js";
 import DataTypes from "sequelize";
 
 const Message = sequelize.define(
@@ -7,6 +7,7 @@ const Message = sequelize.define(
     id: {
       type: DataTypes.STRING,
       primaryKey: true,
+      allowNull: false,
     },
     subject: {
       type: DataTypes.STRING,
@@ -16,7 +17,7 @@ const Message = sequelize.define(
         notEmpty: true,
       },
     },
-    messageContents: {
+    Contents: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
