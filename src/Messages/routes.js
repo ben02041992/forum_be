@@ -1,10 +1,17 @@
 import express from "express";
 
-import { createMessage, getMessagesById } from "../Messages/controller";
+import {
+  getAllMessages,
+  postNewMessage,
+  deleteMessageById,
+} from "./controllers.js";
 
 const router = express.Router();
 
-messageRouter.get("/:userId", getMessagesByUser);
-messageRouter.post("/newMessage", createMessage);
+router.get("/", getAllMessages);
 
-export default messageRouter;
+router.post("/newMessage", postNewMessage);
+
+router.delete("/delete/:id", deleteMessageById);
+
+export default router;

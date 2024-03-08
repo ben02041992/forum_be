@@ -7,5 +7,6 @@ const sequelize = new Sequelize(db, {
 });
 
 sequelize.authenticate();
+  console.log("DB Connected");
 
-export default sequelize;
+  export default sequelize;

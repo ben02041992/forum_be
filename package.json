@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/server.js",
     "dev": "nodemon src/server.js --exec babel-node",
-    "build": "babel src --out-dir dist"
+    "build": "babel src --out-dir dist",
+    "debug": "set DEBUG=express:* & node ./src/server.js"
   },
   "type": "module",
   "keywords": [],
@@ -27,7 +28,8 @@
     "mongoose": "^8.2.1",
     "morgan": "^1.10.0",
     "mysql2": "^3.9.2",
-    "sequelize": "^6.37.1"
+    "sequelize": "^6.37.1",
+    "validator": "^13.11.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.23.9",

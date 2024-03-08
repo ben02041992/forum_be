@@ -1,30 +1,31 @@
 import DataTypes from "sequelize";
 import sequelize from "../db/dbConnection.js";
-import isEmail from "validator/lib/isEmail.js";
 
-const User = sequelize.define(
-  "user",
+const Board = sequelize.define(
+  "board",
   {
-    email: {
+    id: {
       type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    username: {
-      type: DataTypes.STRING,
-      unique: true,
+      primaryKey: true,
       allowNull: false,
     },
-    password: {
+    title: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
+    Genre: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
     },
   },
   { timeStamps: true }
 );
 
-User.associate = (models) => {
-  User.hasMany(models.Message, { onDelete: "CASCADE" });
-};
-
-export default User;
+export default Board;
