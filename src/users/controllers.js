@@ -1,4 +1,5 @@
 import User from "./model.js";
+import jwt from "jsonwebtoken";
 
 export const createUser = async (req, res) => {
   try {
@@ -18,14 +19,12 @@ export const createUser = async (req, res) => {
       .status(201)
       .json({ success: true, message: "User created", user });
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: "Server error",
-        source: "createUser",
-        error: error.message,
-      });
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      source: "createUser",
+      error: error.message,
+    });
   }
 };
 
@@ -60,15 +59,22 @@ export const loginUser = async (req, res) => {
       }
     );
 
-    res.cookie("4rum", token, { httpOnly: true, maxAge: 6000 });
+    res.cookie("4rom", token, { httpOnly: true, maxAge: 6000 });
+    await User.update({ status: "logged in" }, { where: { id } });
+
     return res.status(200).json({
       success: true,
-      message: `${username} logged in successfully`,
+      message: `${username} logged in`,
       user: req.user,
       token,
     });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      source: "loginUser",
+      error: error.message,
+    });
   }
 };
 
