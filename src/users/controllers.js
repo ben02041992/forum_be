@@ -1,13 +1,13 @@
 import User from "./model.js";
 import jwt from "jsonwebtoken";
 
-export const createUser = async (req, res) => {
+export const register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    const userExists = await User.findOne({ email });
+    const existing = await User.findOne({ email });
 
-    if (userExists) {
+    if (existing) {
       return res
         .status(400)
         .json({ success: false, message: "Account already exists" });
@@ -28,20 +28,7 @@ export const createUser = async (req, res) => {
   }
 };
 
-export const allUsers = async (req, res) => {
-  try {
-    const users = await User.findAll({});
-    res.status(201).json({ message: "All Users: ", allUsers });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-export const getUserById = async (req, res) => {
-  req = res.send({ message: "userbyID" });
-};
-
-export const loginUser = async (req, res) => {
+export const login = async (req, res) => {
   try {
     if (!req.user) {
       return res
@@ -55,12 +42,12 @@ export const loginUser = async (req, res) => {
       { id: id, username, email, password },
       process.env.SECRET,
       {
-        expiresIn: process.env.EXPIRY,
+        expiresIn: process.env.EXPIRE,
       }
     );
 
-    res.cookie("4rom", token, { httpOnly: true, maxAge: 6000 });
-    await User.update({ status: "logged in" }, { where: { id } });
+    res.cookie("Auth", token, { httpOnly: true, maxAge: 900000 });
+    await User.findOne(id, { isOnline: true }, { new: true });
 
     return res.status(200).json({
       success: true,
@@ -84,25 +71,76 @@ export const verifyUser = async (req, res) => {
   } catch (error) {
     await User.findByIdAndUpdate(
       req.user.id,
-      { verified: false },
-      { setVerified: true }
+      { isOnline: false },
+      { new: true }
     );
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      source: "verifyUser",
+      error: error.message,
+    });
   }
-  return res.status(500).json({
-    success: false,
-    message: "sever error",
-    source: "verifyUser",
-    error: error.message,
-  });
 };
 
+export const logout = async (req, res) => {
+  try {
+    const { id } = req.user;
+    await User.findByIdAndUpdate(id, { isOnline: false }, { new: true });
+
+    res.clearCookie("Auth");
+
+    return res.status(200).json({ success: true, message: "User logged out" });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      source: "logoutUser",
+      error: error.message,
+    });
+  }
+};
+
+export const onlineUsers = async (req, res) => {
+  try {
+    const users = await User.findAll({ online: true }, ["username", "online"]);
+
+    return res.status(200).json({
+      success: true,
+      source: "onlineUsers",
+      message: "Online users",
+      users,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      source: "onlineUsers",
+      error: error.message,
+    });
+  }
+};
 export const updateUserById = async (req, res) => {
-  req = res.send({ message: "updateuserbyID" });
+  try {
+    const { id } = req.user;
+    const { username, email, password } = req.body;
+    const user = await User.findByIdAndUpdate(
+      id,
+      { username, email, password },
+      { new: true }
+    );
+    if (!user) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+    return res
+      .status(200)
+      .json({ success: true, message: "User updated", user });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      source: "updateUserById",
+      error: error.message,
+    });
+  }
 };
-
-export const deleteUserById = async (req, res) => {
-  req = res.send({ message: "deleteuserbyID" });
-};
-
-export const logOut = async (req, res) => {};
-
