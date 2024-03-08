@@ -2,11 +2,10 @@ import express from "express";
 
 import {
   updateUserById,
+  login,
+  register,
   verifyUser,
-  loginUser,
-  createUser,
-  getUserById,
-  logOut,
+  logout,
 } from "./controllers.js";
 
 import { hashPass } from "../middleware/auth.js";
@@ -15,13 +14,10 @@ import verifyJwt from "../middleware/jwt.js";
 
 const router = express.Router();
 
-console.log(hashPass, createUser);
-
-router.post("/signup", hashPass, createUser);
-router.post("/login", comparePass, loginUser);
-router.get("/verifyUser", verifyJwt, verifyUser);
-router.get("/:id", verifyJwt, getUserById);
-router.put("/update/:id", updateUserById);
-router.delete("/logout", verifyJwt, logOut);
+router.post("/signup", hashPass, register);
+router.post("/login", comparePass, login);
+router.get("/verify", verifyJwt, verifyUser);
+router.put("/update/:id", verifyJwt, updateUserById);
+router.delete("/logout", verifyJwt, logout);
 
 export default router;

@@ -14,6 +14,7 @@ import Board from "./boards/model.js";
 import Message from "./messages/model.js";
 
 const port = process.env.PORT || 8080;
+const secret = process.env.SECRET;
 const app = express();
 
 const syncTables = async () => {
@@ -30,6 +31,9 @@ app.use(
       "https://desk-4-4rum.netlify.app",
       "http://localhost:5001",
       "http://localhost:5173",
+      "3.75.158.163",
+      "3.125.183.140",
+      "35.157.117.28",
     ],
   })
 );
@@ -44,6 +48,14 @@ if (process.env.NODE_ENV === "development") {
 
 app.get("/health", (req, res) => {
   res.status(200).json({ message: "API Healthy" });
+});
+
+app.get("/cookie", (req, res) => {
+  res.cookie(req.token, secret, { httpOnly: true, signed: true }).send;
+});
+
+app.get("/", (req, res) => {
+  res.cookie(req.signedCookies);
 });
 
 app.use("/users", userRouter);
