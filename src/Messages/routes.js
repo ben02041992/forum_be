@@ -1,16 +1,12 @@
 import express from "express";
 
-import {
-  getAllMessages,
-  postNewMessage,
-  deleteMessageById,
-} from "./controllers.js";
+import { getMessages, newMessage, deleteMessageById } from "./controllers.js";
 
 const router = express.Router();
 
-router.get("/", getAllMessages);
+router.get("/", getMessages);
 
-router.post("/newMessage", postNewMessage);
+router.post("/newMessage", newMessage);
 
 router.delete("/delete/:id", deleteMessageById);
 

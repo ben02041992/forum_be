@@ -2,24 +2,15 @@ import Message from "./model.js";
 
 // GET==================================================
 
-export const getAllMessages = (req, res) => {
-  res.json(messageList);
+export const getMessages = (req, res) => {
+  res.json(message);
 };
 // POST==================================================
-export const postNewMessage = (req, res) => {
+export const newMessage = (req, res) => {
   const newMessage = req.body;
-  message.push(newMessage);
-  res.json(newMessage);
+  res.status(200).json(newMessage);
 };
-// PUT==================================================
-export const ReplyToBoard = (req, res) => {
-  const messageId = req.params.id;
-  const updatedMessage = req.body;
-  message = message.map((message) =>
-    message.id === messageId ? updatedMessage : message
-  );
-  res.json(updatedMessage);
-};
+
 // DELETE==================================================
 export const deleteMessageById = (req, res) => {
   const messageId = req.params.id;

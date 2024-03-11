@@ -1,6 +1,7 @@
 import DataTypes from "sequelize";
 import sequelize from "../db/dbConnection.js";
 
+
 const User = sequelize.define(
   "user",
   {
@@ -17,10 +18,6 @@ const User = sequelize.define(
     password: {
       type: DataTypes.STRING,
       allowNull: false,
-    },
-    online: {
-      type: DataTypes.BOOLEAN,
-      default: false,
     },
   },
   { timeStamps: true }

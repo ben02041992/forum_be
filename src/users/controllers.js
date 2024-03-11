@@ -1,13 +1,13 @@
 import User from "./model.js";
 import jwt from "jsonwebtoken";
 
-export const register = async (req, res) => {
+export const signup = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    const existing = await User.findOne({ email });
+    const existingUser = await User.findOne({ where: { email } });
 
-    if (existing) {
+    if (existingUser) {
       return res
         .status(400)
         .json({ success: false, message: "Account already exists" });
@@ -28,56 +28,30 @@ export const register = async (req, res) => {
   }
 };
 
-export const login = async (req, res) => {
+export const logIn = async (req, res) => {
+  const { id, username, email, name } = req.user;
+
   try {
-    if (!req.user) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid credentials" });
-    }
-
-    const { id, username, email, password } = req.user;
-
-    const token = jwt.sign(
-      { id: id, username, email, password },
-      process.env.SECRET,
-      {
-        expiresIn: process.env.EXPIRE,
-      }
+    const token = JWT.sign(
+      { id, email, username, name },
+      process.env.JWT_SECRET,
+      { expiresIn: "1m" }
     );
 
-    res.cookie("Auth", token, { httpOnly: true, maxAge: 900000 });
-    await User.findOne(id, { isOnline: true }, { new: true });
+    res.cookie("authToken", token, {
+      httpOnly: true,
+      expires: new Date(Date.now() + 60000),
+    });
 
     return res.status(200).json({
       success: true,
-      message: `${username} logged in`,
-      user: req.user,
+      message: `account ${email} has logged in`,
       token,
     });
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Server error",
-      source: "loginUser",
-      error: error.message,
-    });
-  }
-};
-
-export const verifyUser = async (req, res) => {
-  try {
-    return res.status(200).json({ success: true, user: req.user });
-  } catch (error) {
-    await User.findByIdAndUpdate(
-      req.user.id,
-      { isOnline: false },
-      { new: true }
-    );
-    return res.status(500).json({
-      success: false,
-      message: "Server error",
-      source: "verifyUser",
+      message: "Internal server error",
       error: error.message,
     });
   }
@@ -86,7 +60,7 @@ export const verifyUser = async (req, res) => {
 export const logout = async (req, res) => {
   try {
     const { id } = req.user;
-    await User.findByIdAndUpdate(id, { isOnline: false }, { new: true });
+    await User.findByIdAndUpdate(id, { loggedIn: false }, { new: true });
 
     res.clearCookie("Auth");
 
@@ -101,25 +75,6 @@ export const logout = async (req, res) => {
   }
 };
 
-export const onlineUsers = async (req, res) => {
-  try {
-    const users = await User.findAll({ online: true }, ["username", "online"]);
-
-    return res.status(200).json({
-      success: true,
-      source: "onlineUsers",
-      message: "Online users",
-      users,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Server error",
-      source: "onlineUsers",
-      error: error.message,
-    });
-  }
-};
 export const updateUserById = async (req, res) => {
   try {
     const { id } = req.user;

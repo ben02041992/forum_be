@@ -2,21 +2,20 @@ import express from "express";
 
 import {
   updateUserById,
-  login,
-  register,
-  verifyUser,
+  logIn,
+  signup,
+  loggedIn,
   logout,
 } from "./controllers.js";
 
 import { hashPass } from "../middleware/auth.js";
 import { comparePass } from "../middleware/auth.js";
-import verifyJwt from "../middleware/jwt.js";
+import { signJwt, verifyJwt } from "../middleware/jwt.js";
 
 const router = express.Router();
 
-router.post("/signup", hashPass, register);
-router.post("/login", comparePass, login);
-router.get("/verify", verifyJwt, verifyUser);
+router.post("/signup", signup, hashPass);
+router.post("/login", logIn, comparePass, signJwt);
 router.put("/update/:id", verifyJwt, updateUserById);
 router.delete("/logout", verifyJwt, logout);
 
