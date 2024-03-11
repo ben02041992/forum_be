@@ -1,7 +1,7 @@
 import express from "express";
 import { getBoards, newBoard } from "./controllers.js";
 
-import verifyJwt from "../middleware/jwt.js";
+import { verifyJwt } from "../middleware/jwt.js";
 
 const router = express.Router();
 

@@ -4,11 +4,11 @@ import DataTypes from "sequelize";
 const Message = sequelize.define(
   "message",
   {
-    id: {
-      type: DataTypes.STRING,
-      primaryKey: true,
-      allowNull: false,
-    },
+    // id: {
+    //   type: DataTypes.STRING,
+    //   primaryKey: true,
+    //   allowNull: false,
+    // },
     subject: {
       type: DataTypes.STRING,
       unique: true,

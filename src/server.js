@@ -28,12 +28,11 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: [
-      "https://desk-4-4rum.netlify.app",
       "http://localhost:5001",
-      "http://localhost:5173",
-      "3.75.158.163",
+      "http://3.75.158.163",
       "3.125.183.140",
       "35.157.117.28",
+      "https://desk-4-4rum.netlify.app",
     ],
   })
 );
