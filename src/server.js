@@ -18,6 +18,9 @@ const secret = process.env.SECRET;
 const app = express();
 
 const syncTables = async () => {
+  Board.hasMany(Message);
+  Message.belongsTo(Board);
+
   await User.sync();
   await Board.sync();
   await Message.sync();
