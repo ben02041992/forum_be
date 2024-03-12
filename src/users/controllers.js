@@ -32,21 +32,23 @@ export const logIn = async (req, res) => {
   const { id, username, email, name } = req.user;
 
   try {
-    const token = JWT.sign(
-      { id, email, username, name },
-      process.env.JWT_SECRET,
-      { expiresIn: "1m" }
-    );
+    // const token = JWT.sign(
+    //   { id, email, username, name },
+    //   process.env.JWT_SECRET,
+    //   { expiresIn: "1m" }
+    // );
 
-    res.cookie("authToken", token, {
-      httpOnly: true,
-      expires: new Date(Date.now() + 60000),
-    });
+    // res.cookie("authToken", token, {
+    //   httpOnly: true,
+    //   expires: new Date(Date.now() + 60000),
+    // });
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: `account ${email} has logged in`,
-      token,
+      user: {
+        username: username,
+      },
     });
   } catch (error) {
     return res.status(500).json({

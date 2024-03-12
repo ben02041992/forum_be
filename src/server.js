@@ -25,18 +25,8 @@ const syncTables = async () => {
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5001",
-      "http://3.75.158.163",
-      "3.125.183.140",
-      "35.157.117.28",
-      "https://desk-4-4rum.netlify.app",
-    ],
-  })
-);
-
+app.use(cors());
+// app.use("/users", userRouter);
 userRouter.use(express.Router());
 messageRouter.use(express.Router());
 boardRouter.use(express.Router());
@@ -65,4 +55,3 @@ app.listen(port, () => {
   console.log(`server is running on port ${port}`);
   syncTables();
 });
-
