@@ -9,16 +9,9 @@ const Board = sequelize.define(
     //   primaryKey: true,
     //   allowNull: false,
     // },
-    title: {
+    game: {
       type: DataTypes.STRING,
       unique: true,
-      allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
-    },
-    Genre: {
-      type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notEmpty: true,

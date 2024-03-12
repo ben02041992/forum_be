@@ -9,15 +9,14 @@ const Message = sequelize.define(
     //   primaryKey: true,
     //   allowNull: false,
     // },
-    subject: {
+    username: {
       type: DataTypes.STRING,
-      unique: true,
       allowNull: false,
-      validate: {
+      validate:{
         notEmpty: true,
-      },
+      }
     },
-    Contents: {
+    content: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
