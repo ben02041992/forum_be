@@ -6,7 +6,7 @@ import Board from "../boards/model.js";
 export const getMessages = async(req, res) => {
   try{
     const messages = await Message.findAll({});
-    return res.status(501).json({
+    return res.status(200).json({
       success: true,
       message: "Got messages",
       messages
@@ -26,7 +26,7 @@ export const getMessagesByBoard = async(req, res) => {
   try{
     const messages = await Message.findAll({ where: { boardId: req.params.boardId }});
     const board = await Board.findOne({ where: {id: req.params.boardId} });
-    return res.status(501).json({
+    return res.status(200).json({
       success: true,
       message: `Got messages from the '${board.game}' board`,
       messages
@@ -46,7 +46,7 @@ export const getMessageById = async(req,res) => {
   try{
     const message = await Message.findOne({ where: { id: req.params.id } });
     if(message){
-      return res.status(501).json({
+      return res.status(200).json({
         success: true,
         message: "Got message",
         message
@@ -57,7 +57,7 @@ export const getMessageById = async(req,res) => {
     }
   }
   catch(error){
-    res.status(500).json({
+    res.status(200).json({
         success: false,
         message: "Server error",
         source: "getMessageById",
@@ -71,7 +71,7 @@ export const newMessage = async (req, res) => {
   try{
     const { username, content, boardId } = req.body;
     const message = await Message.create({username, content, boardId});
-    return res.status(501).json({
+    return res.status(201).json({
       success: true,
       message: "Message sent",
       message
@@ -106,7 +106,7 @@ export const updateMessageById = async(req,res)=> {
     })
   }
   catch(error){
-    return res.status(500).json({
+    return res.status(200).json({
     success: false,
     message: "Server error",
     source: "updateMessageById",
@@ -121,7 +121,7 @@ export const deleteMessageById = async(req, res) => {
     const message = await Message.findOne({ where: { id: req.params.id } });
     if(message){
       await Message.destroy({where: { id: req.params.id} });
-      return res.status(501).json({
+      return res.status(200).json({
         success: true,
         message: `Message with id '${req.params.id}' was deleted`,
         message
