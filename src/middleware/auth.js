@@ -1,24 +1,22 @@
 import bcrypt from "bcrypt";
 import User from "../users/model.js";
+import e from "express";
 
 export const hashPass = async (req, res, next) => {
+  console.log(req.body);
   const saltRounds = parseInt(process.env.SALT_ROUNDS);
   try {
-    const password = req.body;
+    // if (!password) {
+    //   return res
+    //     .status(400)
+    //     .json({ success: false, message: "Password is required" });
+    // }
 
-    if (!password) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Password is required" });
-    }
-
-    const hashedPassword = await bcrypt.hash(user.password, saltRounds);
+    const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
 
     req.body.password = hashedPassword;
-
+    console.log(req.body);
     next();
-
-    return { data };
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -31,16 +29,16 @@ export const hashPass = async (req, res, next) => {
 export const comparePass = async (req, res, next) => {
   try {
     const { password, email } = req.body;
+    console.log(req.body);
+    // if (!password || !email) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "Email and password are required",
+    //   });
+    // }
 
-    if (!password || !email) {
-      return res.status(400).json({
-        success: false,
-        message: "Email and password are required",
-      });
-    }
-
-    const user = await User.findOne({ where: { email } });
-
+    const user = await User.findOne({ where: { username: req.body.username } });
+    console.log(user);
     if (!user) {
       return res
         .status(404)
@@ -48,12 +46,12 @@ export const comparePass = async (req, res, next) => {
     }
 
     const match = await bcrypt.compare(password, user.password);
+    console.log(match);
     if (!match) {
       return res.status(401).json({
         success: false,
         message: "Invalid credentials",
         source: "match",
-        error: error.message,
       });
     }
 
@@ -68,11 +66,12 @@ export const comparePass = async (req, res, next) => {
 
     next();
   } catch (error) {
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       message: "Server error",
       source: "comparePassword",
-      error: error.message,
+      errormessage: error.message,
+      error: error,
     });
   }
 };

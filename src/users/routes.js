@@ -8,8 +8,8 @@ import { signJwt, verifyJwt } from "../middleware/jwt.js";
 
 const router = express.Router();
 
-router.post("/signup", signup, hashPass);
-router.post("/login", logIn, comparePass, signJwt);
+router.post("/signup", hashPass, signup);
+router.post("/login", comparePass, logIn);
 router.put("/update/:id", verifyJwt, updateUserById);
 router.delete("/logout", verifyJwt, logout);
 
