@@ -1,12 +1,17 @@
 import express from "express";
-import { getBoards, newBoard, getBoardById } from "./controllers.js";
+
+import { getBoards, getBoardById, newBoard } from "./controllers.js";
+
 
 import { verifyJwt } from "../middleware/jwt.js";
 
 const router = express.Router();
 
 router.get("/", getBoards);
-router.get("/:id", getBoardById);
-router.post("/post", newBoard);
+
+
+router.get("/board/:boardId", getBoardById);
+
+router.post("/createBoard", /*verifyJwt,*/ newBoard);
 
 export default router;
