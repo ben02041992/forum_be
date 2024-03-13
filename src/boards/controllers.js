@@ -61,5 +61,6 @@ export const getBoardById = async(req, res) =>{
         source: "getBoardById",
         error: error.message,
       });
+
   }
 };
