@@ -64,3 +64,27 @@ export const getBoardById = async(req, res) =>{
 
   }
 };
+export const getBoardByName = async(req, res) =>{
+  try{
+    const board = await Board.findOne({ where: { game: req.params.game } });
+    if(board){
+      return res.status(200).json({
+        success: true,
+        message: "Got board",
+        board
+      })
+    }
+    else{
+      throw new Error(`Board with name '${req.params.game}' not found`);
+    }
+  }
+  catch(error){
+    res.status(500).json({
+        success: false,
+        message: "Server error",
+        source: "getBoardByName",
+        error: error.message,
+      });
+
+  }
+};
