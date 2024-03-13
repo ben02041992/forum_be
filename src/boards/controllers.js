@@ -32,12 +32,12 @@ export const getBoards = async(req, res) => {
         })
     }
     catch(error){
-        res.status(500).json({
-            success: false,
-            message: "Server error",
-            source: "getBoards",
-            error: error.message,
-          });
+      return res.status(500).json({
+          success: false,
+          message: "Server error",
+          source: "getBoards",
+          error: error.message,
+        });
     }
 };
 export const getBoardById = async(req, res) =>{
@@ -55,7 +55,7 @@ export const getBoardById = async(req, res) =>{
     }
   }
   catch(error){
-    res.status(500).json({
+    return res.status(500).json({
         success: false,
         message: "Server error",
         source: "getBoardById",
@@ -79,7 +79,7 @@ export const getBoardByName = async(req, res) =>{
     }
   }
   catch(error){
-    res.status(500).json({
+    return res.status(500).json({
         success: false,
         message: "Server error",
         source: "getBoardByName",
