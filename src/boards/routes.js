@@ -11,7 +11,7 @@ router.get("/", getBoards);
 
 router.get("/board/:boardId", getBoardById);
 
-router.get("board/game/:game", getBoardByName);
+router.get("/board/game/:game", getBoardByName);
 
 router.post("/createBoard", /*verifyJwt,*/ newBoard);
 
