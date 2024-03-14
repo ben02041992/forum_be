@@ -57,7 +57,7 @@ export const getMessageById = async(req,res) => {
     }
   }
   catch(error){
-    res.status(200).json({
+    return res.status(200).json({
         success: false,
         message: "Server error",
         source: "getMessageById",
@@ -132,7 +132,7 @@ export const deleteMessageById = async(req, res) => {
     }
   }
   catch(error){
-    res.status(500).json({
+    return res.status(500).json({
         success: false,
         message: "Server error",
         source: "deleteMessageById",
